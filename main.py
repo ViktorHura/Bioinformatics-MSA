@@ -1,5 +1,6 @@
 from MSA import MSA
 
+GLOBAL = True
 MATCH = 5
 MISMATCH = -2
 INDEL = -4
@@ -8,6 +9,7 @@ GAPGAP = 0
 # could modify this to use a substitution matrix
 def replacementScore(A, B):
     return MATCH if A == B else MISMATCH
+
 
 def globalAlignTest():
     sequences = [
@@ -32,12 +34,14 @@ def localAlignTest():
     alignments, lpad, rpad = MSA(sequences, gap_penalty=INDEL, gap_gap_penalty=GAPGAP,
                                  substitution_func=replacementScore, global_align=False)
 
+    indicator = " "*(4 + lpad) + "[" + " "*(len(alignments[0])-rpad-lpad-2) + "]"
+    print(indicator)
+    maxj = len(alignments[0]) - rpad
     for i, a in enumerate(alignments):
         repr = f's{i + 1}: {a}'
         if i != len(alignments)-1:
             next_a = alignments[i+1]
             repr+= "\n    " + (" " * lpad)
-            maxj = len(a) - rpad
             for j in range(lpad, maxj):
                 repr += "|" if a[j] == next_a[j] else " "
 
