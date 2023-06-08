@@ -1,7 +1,6 @@
 import sys
 import configparser
-from functools import partial
-import fastaparser
+import FastaParser.fastaparser
 from MSA import MSA
 
 

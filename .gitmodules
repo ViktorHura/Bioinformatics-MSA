@@ -1,0 +1,3 @@
+[submodule "FastaParser"]
+	path = FastaParser
+	url = https://github.com/Kronopt/FastaParser
