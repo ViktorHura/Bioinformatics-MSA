@@ -2,6 +2,7 @@ from math import inf
 from itertools import product, combinations
 from copy import deepcopy
 
+
 class NMatrix:
     # dimension_length in the form of [..., #pages, #rows, #cols]
     def __init__(self, dimension_lengths):
@@ -110,7 +111,8 @@ def globalAlignmentPath(matrix):
     return path
 
 
-def parseGlobalAlignments(sequences, path):
+# returns score + aligned sequences
+def parseGlobalAlignments(score, sequences, path):
     alignments = ["" for s in sequences]    # store alignments as list of strings
     maxlen = 0                              # longest alignment length, to pad out the other ones
 
@@ -143,7 +145,7 @@ def parseGlobalAlignments(sequences, path):
         for j in range(dif):
             alignments[i] += "."
 
-    return alignments
+    return score, alignments
 
 
 # get local alignment path in a filled NMatrix
@@ -161,8 +163,8 @@ def localAlignmentPath(matrix, best_cell):
     return path
 
 
-# returns aligned strings + lengths of extra left and right padding (with leftover characters and spaces)
-def parseLocalAlignments(sequences, path):
+# returns score, aligned strings + lengths of extra left and right padding (with leftover characters and spaces)
+def parseLocalAlignments(score, sequences, path):
     # [alignment, position of first consumed letter, position of last consumed letter]
     alignments = [["", None, None] for s in sequences]
     maxRPad = 0
@@ -208,7 +210,7 @@ def parseLocalAlignments(sequences, path):
         for j in range(rdif):
             alignments[i][0] += " "
 
-    return ([a[0] for a in alignments], maxLPad, maxRPad)
+    return score, [a[0] for a in alignments], maxLPad, maxRPad
 
 
 def MSA(sequences, gap_penalty, gap_gap_penalty, substitution_func, global_align=True):
@@ -227,10 +229,17 @@ def MSA(sequences, gap_penalty, gap_gap_penalty, substitution_func, global_align
     final_pos = [d-1 for d in dimensions]
     nMasks = neighbourMask(len(dimensions))
 
-    print(f'Filling matrix of dimensions: {dimensions}\n')
+    print(f'Filling matrix of dimensions: {dimensions}\nPlease wait...')
 
+    # keep track of progress (in %) for sanity during long alignments
+    progress = 0
     # Fill each cell in matrix in order
     while(True):
+        p = matrix.__tupleToIndex__(cur_pos) / len(matrix.data)
+        if p - progress*0.01 > 0.01:
+            progress += 1
+            print(f'\rProgress: {progress}%', end='')
+
         # neighbouring cells to consider and a place to store their scores
         neighbours = [vectorSum(cur_pos, mask) for mask in nMasks]
         scores = [-inf]*len(neighbours)
@@ -265,11 +274,12 @@ def MSA(sequences, gap_penalty, gap_gap_penalty, substitution_func, global_align
             break
         cur_pos = nextMatrixPosition(cur_pos, dimensions)
 
+    print("\r" + " "*40)        # clear progress line
     if global_align:
-        print(f'Final alignment score: {matrix[final_pos][0]}\n')
+        score = matrix[final_pos][0]
         path = globalAlignmentPath(matrix)
-        return parseGlobalAlignments(seqs, path)
+        return parseGlobalAlignments(score, seqs, path)
     else:
-        print(f'Final alignment score: {best_cell[0]}\n')
+        score = best_cell[0]
         path = localAlignmentPath(matrix, best_cell)
-        return parseLocalAlignments(seqs, path)
+        return parseLocalAlignments(score, seqs, path)
