@@ -1,6 +1,6 @@
 import sys
 import configparser
-import FastaParser.fastaparser
+import FastaParser.fastaparser as fastaparser
 from MSA import MSA
 
 
