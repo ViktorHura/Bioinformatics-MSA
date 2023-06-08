@@ -1,0 +1,6 @@
+Score: 56.0
+s1: ACTGG.TC.A
+     | || || |
+s2: .CAGGGTC.A
+     ||||| | |
+s3: CCAGGGACCA

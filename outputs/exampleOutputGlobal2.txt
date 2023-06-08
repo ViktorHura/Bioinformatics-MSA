@@ -1,0 +1,10 @@
+Score: 320.0
+s1: TA.TGAA.C
+    || |||| |
+s2: TA.TGAACC
+    || |||| |
+s3: TAATGAATC
+    || ||||||
+s4: TATTGAATC
+    || ||||||
+s5: TAATGAATC

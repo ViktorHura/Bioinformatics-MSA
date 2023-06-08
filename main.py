@@ -27,7 +27,14 @@ def parseGlobalOutput(input, output):
         input[i] = seq.id.ljust(maxIDlen, ' ')
 
     for i, a in enumerate(alignments):
-        outstr += f'{input[i]}: {a}\n'
+        repr = f'{input[i]}: {a}'                 # print aligned string
+        if i != len(alignments)-1:              # print | matches for the next alignment
+            next_a = alignments[i+1]
+            repr += "\n" + " "*(maxIDlen+2)
+            for j in range(len(a)):
+                repr += "|" if a[j] == next_a[j] and a[j] != '.' else " "
+        outstr += repr + "\n"
+
     return outstr
 
 
