@@ -22,8 +22,13 @@ def parseInput(path):
 def parseGlobalOutput(input, output):
     score, alignments = output
     outstr = f'Score: {score}\n'
+
+    maxIDlen = max([len(i.id) for i in input])
+    for i, seq in enumerate(input):
+        input[i] = seq.id.ljust(maxIDlen, ' ')
+
     for i, a in enumerate(alignments):
-        outstr += f'{input[i].id}: {a}\n'
+        outstr += f'{input[i]}: {a}\n'
     return outstr
 
 
@@ -31,20 +36,20 @@ def parseLocalOutput(input, output):
     score, alignments, lpad, rpad = output
 
     maxIDlen = max([len(i.id) for i in input])
-    for i in input:
-        i.id = i.id.ljust(maxIDlen, ' ')
+    for i, seq in enumerate(input):
+        input[i] = seq.id.ljust(maxIDlen, ' ')
 
     # indicator line to show which region was aligned
     outstr = f'Score: {score}\n'
     outstr += " "*(maxIDlen+2+lpad) + "[" + " "*(len(alignments[0])-rpad-lpad-2) + "]\n"
     maxj = len(alignments[0]) - rpad            # aligned region = [lpad, maxj[
     for i, a in enumerate(alignments):
-        repr = f'{input[i].id}: {a}'                 # print aligned string
+        repr = f'{input[i]}: {a}'                 # print aligned string
         if i != len(alignments)-1:              # print | matches for the next alignment
             next_a = alignments[i+1]
             repr += "\n" + " "*(maxIDlen+2) + (" " * lpad)
             for j in range(lpad, maxj):
-                repr += "|" if a[j] == next_a[j] else " "
+                repr += "|" if a[j] == next_a[j] and a[j] != '.' else " "
         outstr += repr + "\n"
     return outstr
 
