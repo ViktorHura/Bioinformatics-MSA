@@ -35,11 +35,11 @@ gapgap = 0
 
 `output_file` must be the path to where the output text file will be written (in addition to the console output)
 
-###Examples
+### Examples
 
 Example config files can be found in `configs/` with example inputs in `inputs/` and their generated outputs in `outputs/`
 
-##Optional Improvements
+## Optional Improvements
 
 While the algorithms implemented are not intended for practical use due to their complexity, the following improvements can be nice to have when evaluating them.
 #### Substitutions matrix
